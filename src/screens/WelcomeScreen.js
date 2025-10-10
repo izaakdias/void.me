@@ -13,6 +13,7 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
+import { api } from '../config/api';
 
 const {width, height} = Dimensions.get('window');
 
@@ -61,14 +62,13 @@ const WelcomeScreen = ({navigation}) => {
       console.log('🎫 Validando código de convite:', inviteCode);
       
       // Validar código de convite no backend
-      const { AuthService } = await import('../services/AuthService');
-      const result = await AuthService.validateInviteCode(inviteCode);
+      const result = await api.verifyInviteCode(inviteCode);
       
       if (result.success) {
         console.log('✅ Código de convite válido!');
         Alert.alert(
           'Sucesso!', 
-          `Código de convite válido!\n\nCódigo: ${inviteCode}\n\nConvidado por: ${result.inviter?.name || 'Usuário'}`,
+          `Código de convite válido!\n\nCódigo: ${inviteCode}`,
           [
             {
               text: 'OK',
@@ -128,27 +128,49 @@ const WelcomeScreen = ({navigation}) => {
     setPhoneNumber(maskedNumber);
   };
 
-  const handleJoinSubmit = () => {
+  const handleJoinSubmit = async () => {
     if (!phoneNumber.trim()) {
       Alert.alert('Erro', 'Por favor, insira seu número de telefone');
       return;
     }
 
-    const fullPhoneNumber = `${selectedCountry.dialCode} ${phoneNumber}`;
+    const fullPhoneNumber = `${selectedCountry.dialCode}${phoneNumber.replace(/\D/g, '')}`;
     
-    Alert.alert(
-      'Sucesso!',
-      `Você foi adicionado à lista de espera!\n\nNúmero: ${fullPhoneNumber}\n\nVocê receberá uma notificação quando o vo1d estiver disponível.`,
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            setShowWaitlistModal(false);
-            setPhoneNumber('');
+    try {
+      console.log('📱 Adicionando à waitlist:', fullPhoneNumber);
+      
+      const result = await api.addToWaitlist(fullPhoneNumber);
+      
+      if (result.success) {
+        Alert.alert(
+          'Sucesso!',
+          `Você foi adicionado à lista de espera!\n\nNúmero: ${fullPhoneNumber}\n\nVocê receberá uma notificação quando o vo1d estiver disponível.`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setShowWaitlistModal(false);
+                setPhoneNumber('');
+              }
+            }
+          ]
+        );
+      } else {
+        throw new Error(result.message || 'Erro ao adicionar à waitlist');
+      }
+    } catch (error) {
+      console.error('❌ Erro ao adicionar à waitlist:', error);
+      Alert.alert(
+        'Erro',
+        'Não foi possível adicionar seu número à lista de espera. Tente novamente.',
+        [
+          {
+            text: 'OK',
+            onPress: () => setPhoneNumber('')
           }
-        }
-      ]
-    );
+        ]
+      );
+    }
   };
 
   return (
