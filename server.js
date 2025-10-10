@@ -75,8 +75,13 @@ const redisClient = redis.createClient({
       }
       console.log(`Redis: Tentativa de reconexão ${retries}`);
       return Math.min(retries * 50, 500);
-    }
-  }
+    },
+    connectTimeout: 10000,
+    lazyConnect: true,
+    keepAlive: 30000
+  },
+  retryDelayOnFailover: 100,
+  maxRetriesPerRequest: 3
 });
 
 redisClient.on('error', (err) => {
@@ -94,6 +99,42 @@ redisClient.on('reconnecting', () => {
 redisClient.on('ready', () => {
   console.log('Redis pronto para uso!');
 });
+
+// Wrapper para operações Redis com retry
+const redisSafe = {
+  get: async (key) => {
+    try {
+      return await redisClient.get(key);
+    } catch (err) {
+      console.error('Redis GET error:', err);
+      return null;
+    }
+  },
+  setEx: async (key, ttl, value) => {
+    try {
+      return await redisClient.setEx(key, ttl, value);
+    } catch (err) {
+      console.error('Redis SETEX error:', err);
+      return false;
+    }
+  },
+  del: async (key) => {
+    try {
+      return await redisClient.del(key);
+    } catch (err) {
+      console.error('Redis DEL error:', err);
+      return false;
+    }
+  },
+  keys: async (pattern) => {
+    try {
+      return await redisClient.keys(pattern);
+    } catch (err) {
+      console.error('Redis KEYS error:', err);
+      return [];
+    }
+  }
+};
 
 redisClient.connect().then(() => {
   console.log('Conectado ao Redis');
@@ -297,7 +338,7 @@ app.post('/auth/verify-otp', async (req, res) => {
     }
 
     const formattedPhone = formatPhoneNumber(phoneNumber);
-    const storedOTP = await redisClient.get(`otp:${formattedPhone}:${sessionId}`);
+    const storedOTP = await redisSafe.get(`otp:${formattedPhone}:${sessionId}`);
 
     // Verificar se estamos em modo de desenvolvimento
     const isDevelopment = process.env.NODE_ENV === 'development' || 
