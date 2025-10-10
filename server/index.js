@@ -85,7 +85,9 @@ if (process.env.DATABASE_URL) {
   console.log('Conectado ao PostgreSQL');
   
   // Criar tabelas automaticamente
-  createTables();
+  createTables().catch(err => {
+    console.error('Erro ao criar tabelas:', err);
+  });
 } else {
   // Desenvolvimento - SQLite
   const dbPath = path.join(__dirname, 'data', 'vo1d.db');
@@ -100,12 +102,19 @@ if (process.env.DATABASE_URL) {
 
 // Função para criar tabelas no PostgreSQL
 async function createTables() {
-  if (!isPostgres) return;
+  if (!isPostgres) {
+    console.log('Não é PostgreSQL, pulando criação de tabelas');
+    return;
+  }
+  
+  console.log('Iniciando criação de tabelas PostgreSQL...');
   
   try {
     const client = await db.connect();
+    console.log('Cliente PostgreSQL conectado');
     
     // Users table
+    console.log('Criando tabela users...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -118,8 +127,10 @@ async function createTables() {
         is_admin BOOLEAN DEFAULT FALSE
       )
     `);
+    console.log('Tabela users criada');
     
     // Messages table
+    console.log('Criando tabela messages...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS messages (
         id SERIAL PRIMARY KEY,
@@ -135,8 +146,10 @@ async function createTables() {
         FOREIGN KEY (receiver_id) REFERENCES users (id)
       )
     `);
+    console.log('Tabela messages criada');
     
     // Invite codes table
+    console.log('Criando tabela invite_codes...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS invite_codes (
         id SERIAL PRIMARY KEY,
@@ -151,8 +164,10 @@ async function createTables() {
         FOREIGN KEY (used_by) REFERENCES users (id)
       )
     `);
+    console.log('Tabela invite_codes criada');
     
     // Waitlist table
+    console.log('Criando tabela waitlist...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS waitlist (
         id SERIAL PRIMARY KEY,
@@ -163,8 +178,10 @@ async function createTables() {
         invite_code VARCHAR(20)
       )
     `);
+    console.log('Tabela waitlist criada');
     
     // Push tokens table
+    console.log('Criando tabela push_tokens...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS push_tokens (
         id SERIAL PRIMARY KEY,
@@ -176,6 +193,7 @@ async function createTables() {
         FOREIGN KEY (user_id) REFERENCES users (id)
       )
     `);
+    console.log('Tabela push_tokens criada');
     
     // Create indexes
     await client.query('CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id)');
