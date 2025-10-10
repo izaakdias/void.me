@@ -61,86 +61,36 @@ console.log('Redis Public URL:', process.env.REDIS_PUBLIC_URL);
 console.log('Redis Host:', process.env.REDIS_HOST);
 console.log('Redis Port:', process.env.REDIS_PORT);
 
-// Configuração do Redis - usando URL completa
-const redisUrl = process.env.REDIS_URL || 'redis://default:qXCXQBsxthyfdKQMpMmvKpqWKsvmGzkS@shortline.proxy.rlwy.net:19266';
-console.log('Conectando ao Redis com URL:', redisUrl);
+// Redis temporariamente desabilitado devido a problemas de conexão
+console.log('Redis temporariamente desabilitado - usando apenas PostgreSQL');
 
-const redisClient = redis.createClient({
-  url: redisUrl,
-  socket: {
-    reconnectStrategy: (retries) => {
-      if (retries > 20) {
-        console.log('Redis: Máximo de tentativas de reconexão atingido');
-        return new Error('Máximo de tentativas de reconexão atingido');
-      }
-      console.log(`Redis: Tentativa de reconexão ${retries}`);
-      return Math.min(retries * 50, 500);
-    },
-    connectTimeout: 10000,
-    lazyConnect: true,
-    keepAlive: 30000
-  },
-  retryDelayOnFailover: 100,
-  maxRetriesPerRequest: 3
-});
+// Mock do Redis para não quebrar o código
+const redisClient = {
+  on: () => {},
+  connect: () => Promise.resolve()
+};
 
-redisClient.on('error', (err) => {
-  console.error('Redis Client Error:', err);
-});
-
-redisClient.on('connect', () => {
-  console.log('Redis conectado com sucesso!');
-});
-
-redisClient.on('reconnecting', () => {
-  console.log('Redis reconectando...');
-});
-
-redisClient.on('ready', () => {
-  console.log('Redis pronto para uso!');
-});
-
-// Wrapper para operações Redis com retry
+// Wrapper para operações Redis com retry - MOCK MODE
 const redisSafe = {
   get: async (key) => {
-    try {
-      return await redisClient.get(key);
-    } catch (err) {
-      console.error('Redis GET error:', err);
-      return null;
-    }
+    console.log('Redis GET (mock):', key);
+    return null; // Sempre retorna null para forçar uso do PostgreSQL
   },
   setEx: async (key, ttl, value) => {
-    try {
-      return await redisClient.setEx(key, ttl, value);
-    } catch (err) {
-      console.error('Redis SETEX error:', err);
-      return false;
-    }
+    console.log('Redis SETEX (mock):', key, ttl, value);
+    return true;
   },
   del: async (key) => {
-    try {
-      return await redisClient.del(key);
-    } catch (err) {
-      console.error('Redis DEL error:', err);
-      return false;
-    }
+    console.log('Redis DEL (mock):', key);
+    return true;
   },
   keys: async (pattern) => {
-    try {
-      return await redisClient.keys(pattern);
-    } catch (err) {
-      console.error('Redis KEYS error:', err);
-      return [];
-    }
+    console.log('Redis KEYS (mock):', pattern);
+    return [];
   }
 };
 
-redisClient.connect().then(() => {
-  console.log('Conectado ao Redis');
-}).catch(err => {
-  console.error('Erro ao conectar com Redis:', err);
-});
+console.log('Redis mock ativado - usando apenas PostgreSQL');
 
 // Configuração do banco de dados
 let db;
