@@ -55,23 +55,33 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Conexão com Redis - DESABILITADO COMPLETAMENTE
+// Conexão com Redis - CORRIGIDA
 console.log('Redis URL:', process.env.REDIS_URL);
 console.log('Redis Public URL:', process.env.REDIS_PUBLIC_URL);
 console.log('Redis Host:', process.env.REDIS_HOST);
 console.log('Redis Port:', process.env.REDIS_PORT);
 
-// Desabilitar Redis completamente para testar
-const redisClient = {
-  get: async () => null,
-  setEx: async () => true,
-  del: async () => true,
-  keys: async () => [],
-  connect: async () => true,
-  on: () => {}
-};
+// Usar REDIS_PUBLIC_URL diretamente
+const redisUrl = process.env.REDIS_PUBLIC_URL || 'redis://default:qXCXQBsxthyfdKQMpMmvKpqWKsvmGzkS@shortline.proxy.rlwy.net:19266';
+console.log('Conectando ao Redis com URL:', redisUrl);
 
-console.log('Redis desabilitado - usando fallback');
+const redisClient = redis.createClient({
+  url: redisUrl
+});
+
+redisClient.on('error', (err) => {
+  console.error('Redis Client Error:', err);
+});
+
+redisClient.on('connect', () => {
+  console.log('Redis conectado com sucesso!');
+});
+
+redisClient.connect().then(() => {
+  console.log('Conectado ao Redis');
+}).catch(err => {
+  console.error('Erro ao conectar com Redis:', err);
+});
 
 // Configuração do banco de dados
 let db;
