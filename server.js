@@ -61,8 +61,8 @@ console.log('Redis Public URL:', process.env.REDIS_PUBLIC_URL);
 console.log('Redis Host:', process.env.REDIS_HOST);
 console.log('Redis Port:', process.env.REDIS_PORT);
 
-// Usar REDIS_PUBLIC_URL diretamente
-const redisUrl = process.env.REDIS_PUBLIC_URL || 'redis://default:qXCXQBsxthyfdKQMpMmvKpqWKsvmGzkS@shortline.proxy.rlwy.net:19266';
+// Usar REDIS_URL primeiro, depois REDIS_PUBLIC_URL
+const redisUrl = process.env.REDIS_URL || process.env.REDIS_PUBLIC_URL || 'redis://default:qXCXQBsxthyfdKQMpMmvKpqWKsvmGzkS@shortline.proxy.rlwy.net:19266';
 console.log('Conectando ao Redis com URL:', redisUrl);
 
 const redisClient = redis.createClient({
