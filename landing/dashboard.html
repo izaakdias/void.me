@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>void. - Waitlist Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .waitlist-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #f8fafc;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .table-content {
+            padding: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: #1e293b;
+        }
+
+        .phone-number {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-weight: 500;
+        }
+
+        .date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .invite-btn {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .invite-btn:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+
+        .invite-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>void. Waitlist Dashboard</h1>
+            <p>Gerencie a lista de espera e envie convites para novos usuários</p>
+        </div>
+
+        <button class="refresh-btn" onclick="loadWaitlist()">🔄 Atualizar Lista</button>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">-</div>
+                <div class="stat-label">Total na Waitlist</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayCount">-</div>
+                <div class="stat-label">Adicionados Hoje</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="weekCount">-</div>
+                <div class="stat-label">Esta Semana</div>
+            </div>
+        </div>
+
+        <div class="waitlist-table">
+            <div class="table-header">
+                <h2>Lista de Espera</h2>
+            </div>
+            <div class="table-content">
+                <div id="waitlistContent">
+                    <div class="empty-state">
+                        <h3>Carregando...</h3>
+                        <p>Aguarde enquanto buscamos os dados da waitlist</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:3000';
+
+        async function loadWaitlist() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/waitlist/stats`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStats(data.stats);
+                    updateWaitlistTable(data.waitlist);
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar waitlist:', error);
+                document.getElementById('waitlistContent').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Erro ao carregar dados</h3>
+                        <p>Verifique se o servidor está rodando</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('totalCount').textContent = stats.total || 0;
+            document.getElementById('todayCount').textContent = stats.today || 0;
+            document.getElementById('weekCount').textContent = stats.thisWeek || 0;
+        }
+
+        function updateWaitlistTable(waitlist) {
+            if (!waitlist || waitlist.length === 0) {
+                document.getElementById('waitlistContent').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Nenhum usuário na waitlist</h3>
+                        <p>A lista de espera está vazia</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Telefone</th>
+                            <th>Data de Entrada</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${waitlist.map((user, index) => `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td class="phone-number">${user.phone}</td>
+                                <td class="date">${formatDate(user.created_at)}</td>
+                                <td>
+                                    <button class="invite-btn" onclick="sendInvite('${user.phone}')">
+                                        Enviar Convite
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('waitlistContent').innerHTML = tableHTML;
+        }
+
+        async function sendInvite(phone) {
+            if (!confirm(`Enviar convite para ${phone}?`)) {
+                return;
+            }
+
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+
+            try {
+                // Enviar convite da waitlist
+                const response = await fetch(`${BACKEND_URL}/api/waitlist/send-invite`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        phone: phone,
+                        source: 'waitlist'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`📱 SMS enviado com sucesso para ${phone}!\n\nCódigo: ${data.inviteCode}\n\nO usuário receberá o código via SMS e será removido da waitlist.`);
+                    // Recarregar a lista para mostrar as mudanças
+                    loadWaitlist();
+                } else if (data.error === 'SMS_FAILED') {
+                    const retry = confirm(`⚠️ Código gerado mas falha ao enviar SMS!\n\nCódigo: ${data.inviteCode}\n\nTelefone: ${phone}\n\nDeseja tentar reenviar o SMS?`);
+                    if (retry) {
+                        await resendSMS(phone, data.inviteCode);
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar convite:', error);
+                alert('Erro ao enviar convite. Tente novamente.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Enviar Convite';
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        async function resendSMS(phone, inviteCode) {
+            if (!confirm(`Reenviar SMS para ${phone}?\n\nCódigo: ${inviteCode}`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/waitlist/send-sms`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        phone: phone,
+                        inviteCode: inviteCode
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`📱 SMS reenviado com sucesso para ${phone}!`);
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao reenviar SMS:', error);
+                alert('Erro ao reenviar SMS. Tente novamente.');
+            }
+        }
+
+        // Carregar dados ao abrir a página
+        document.addEventListener('DOMContentLoaded', loadWaitlist);
+
+        // Atualizar automaticamente a cada 30 segundos
+        setInterval(loadWaitlist, 30000);
+    </script>
+</body>
+</html>

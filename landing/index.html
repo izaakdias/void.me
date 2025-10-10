@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>void. - The real privacy starts here</title>
+    <meta name="description" content="No history. No backups. No traces. The real privacy starts here.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" 
+            onerror="console.log('Particles.js failed to load, using fallback')"></script>
+    <script src="https://threejs.org/examples/js/libs/stats.min.js" 
+            onerror="console.log('Stats.js failed to load')"></script>
+</head>
+<body>
+    <!-- Particles.js container -->
+    <div id="particles-js"></div>
+    
+    <!-- Hero Section -->
+    <main class="hero">
+        <div class="container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <div class="logo">
+                    <span class="logo-text">void.</span>
+                </div>
+            </div>
+            
+            <!-- Main Message -->
+            <div class="message-container">
+                <h1 class="main-message">
+                    no history. no backups. no traces.
+                </h1>
+            </div>
+            
+            <!-- Waitlist Form -->
+            <div class="waitlist-container">
+                <form class="waitlist-form" id="waitlistForm">
+                    <div class="form-group">
+                        <div class="phone-input-container">
+                            <div class="country-selector" id="countrySelector">
+                                <div class="country-display" id="countryDisplay">
+                                    <span class="country-code">+1</span>
+                                </div>
+                                <div class="country-dropdown" id="countryDropdown">
+                                    <div class="country-option" data-code="1" data-name="United States">
+                                        <span class="country-code">+1</span>
+                                        <span class="country-name">United States</span>
+                                    </div>
+                                    <div class="country-option" data-code="55" data-name="Brazil">
+                                        <span class="country-code">+55</span>
+                                        <span class="country-name">Brazil</span>
+                                    </div>
+                                    <div class="country-option" data-code="44" data-name="United Kingdom">
+                                        <span class="country-code">+44</span>
+                                        <span class="country-name">United Kingdom</span>
+                                    </div>
+                                    <div class="country-option" data-code="33" data-name="France">
+                                        <span class="country-code">+33</span>
+                                        <span class="country-name">France</span>
+                                    </div>
+                                    <div class="country-option" data-code="49" data-name="Germany">
+                                        <span class="country-code">+49</span>
+                                        <span class="country-name">Germany</span>
+                                    </div>
+                                    <div class="country-option" data-code="39" data-name="Italy">
+                                        <span class="country-code">+39</span>
+                                        <span class="country-name">Italy</span>
+                                    </div>
+                                    <div class="country-option" data-code="34" data-name="Spain">
+                                        <span class="country-code">+34</span>
+                                        <span class="country-name">Spain</span>
+                                    </div>
+                                    <div class="country-option" data-code="61" data-name="Australia">
+                                        <span class="country-code">+61</span>
+                                        <span class="country-name">Australia</span>
+                                    </div>
+                                    <div class="country-option" data-code="81" data-name="Japan">
+                                        <span class="country-code">+81</span>
+                                        <span class="country-name">Japan</span>
+                                    </div>
+                                    <div class="country-option" data-code="86" data-name="China">
+                                        <span class="country-code">+86</span>
+                                        <span class="country-name">China</span>
+                                    </div>
+                                    <div class="country-option" data-code="91" data-name="India">
+                                        <span class="country-code">+91</span>
+                                        <span class="country-name">India</span>
+                                    </div>
+                                    <div class="country-option" data-code="7" data-name="Russia">
+                                        <span class="country-code">+7</span>
+                                        <span class="country-name">Russia</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="Phone number" 
+                                required
+                                class="phone-input"
+                                maxlength="20"
+                            >
+                        </div>
+                        <button type="submit" class="join-button">
+                            Join the waitlist
+                        </button>
+                    </div>
+                </form>
+                
+                <p class="social-link">
+                    <a href="https://www.instagram.com/____void.me/" target="_blank" rel="noopener noreferrer">
+                        Follow us
+                    </a>
+                </p>
+            </div>
+            
+            <!-- Features removed for cleaner design -->
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 void. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="phone-mask.js"></script>
+    <script src="script.js"></script>
+    <script src="particles.js"></script>
+</body>
+</html>

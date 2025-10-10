@@ -1,0 +1,401 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ---- particles.js container ---- */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    background-image: url("");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    z-index: 1; /* Behind main content */
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #000000;
+    background: #ffffff;
+    overflow-x: hidden;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 0;
+    position: relative;
+    z-index: 2; /* Above particles background */
+}
+
+/* Logo */
+.logo-container {
+    margin-bottom: 80px;
+}
+
+.logo {
+    display: inline-block;
+}
+
+.logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 288px; /* 100% larger (144px * 2) */
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: #000000;
+    position: relative;
+    font-style: normal;
+}
+
+/* Removed underline to match the clean logo design */
+
+/* Message Container - Positioned above logo without affecting logo position */
+.message-container {
+    position: absolute;
+    top: calc(20% + 275px); /* Position from top of viewport + 275px down (300px - 25px) */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 800px;
+    width: 100%;
+    z-index: 10; /* Ensure it's above logo */
+    text-align: center;
+}
+
+.main-message {
+    font-size: clamp(16px, 2.7vw, 32px); /* 50% smaller (64px / 2 = 32px) */
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+    color: #000000;
+}
+
+.sub-message {
+    font-size: clamp(16px, 2.7vw, 32px); /* Same as main message */
+    font-weight: 300; /* Same as main message */
+    color: #000000; /* Same as main message */
+    letter-spacing: -0.01em; /* Same as main message */
+    line-height: 1.2; /* Same as main message */
+}
+
+/* Waitlist Container - Elegant Black Card - Centered */
+.waitlist-container {
+    margin: 0 auto 80px auto; /* Center the card */
+    max-width: 500px;
+    width: 100%;
+    background: #000000;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: visible;
+}
+
+.waitlist-form {
+    margin-bottom: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.phone-input-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: 2px solid #333333;
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: visible;
+    height: 56px;
+}
+
+.country-selector {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8f8f8;
+    border-right: 1px solid #333333;
+    border-radius: 12px 0 0 12px;
+    cursor: pointer;
+    user-select: none;
+    min-width: 80px;
+    height: 100%;
+}
+
+.country-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.country-code {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+}
+
+.country-flag {
+    font-size: 18px;
+}
+
+.country-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #ffffff;
+    border: 2px solid #333333;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: -2px;
+    min-width: 200px;
+    width: max-content;
+}
+
+.country-dropdown.show {
+    display: block !important;
+}
+
+.country-option {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.country-option:hover {
+    background-color: #f5f5f5;
+}
+
+.country-option .country-code {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    min-width: 40px;
+}
+
+.country-option .country-name {
+    font-size: 14px;
+    color: #000000;
+    flex: 1;
+}
+
+.phone-input {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    font-size: 16px;
+    font-weight: 400;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    border-radius: 0 12px 12px 0;
+    height: 100%;
+}
+
+.phone-input-container:focus-within {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.phone-input::placeholder {
+    color: #999999;
+}
+
+.join-button {
+    width: 100%;
+    padding: 20px 24px;
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.join-button:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+.join-button:active {
+    transform: translateY(0);
+}
+
+.form-note {
+    font-size: 14px;
+    color: #cccccc;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 16px;
+}
+
+.social-link {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.social-link a {
+    color: #cccccc;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: color 0.2s ease;
+}
+
+.social-link a:hover {
+    color: #ffffff;
+}
+
+/* Features removed for cleaner design */
+
+/* Footer */
+.footer {
+    padding: 40px 0;
+    border-top: 1px solid #e5e5e5;
+    text-align: center;
+}
+
+.footer p {
+    font-size: 14px;
+    color: #999999;
+    font-weight: 400;
+}
+
+/* Success State */
+.success-message {
+    background: #f0f9ff;
+    border: 1px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    color: #0c4a6e;
+    font-weight: 500;
+    display: none;
+}
+
+.success-message.show {
+    display: block;
+}
+
+/* Loading State */
+.join-button.loading {
+    background: #666666;
+    cursor: not-allowed;
+}
+
+.join-button.loading::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+    
+    .hero {
+        padding: 20px 0;
+    }
+    
+    .logo-container {
+        margin-bottom: 60px;
+    }
+    
+    .message-container {
+        margin-bottom: 60px;
+    }
+    
+    .waitlist-container {
+        margin-bottom: 60px;
+    }
+    
+    .form-group {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .email-input {
+        min-width: 100%;
+        max-width: 320px;
+    }
+    
+    .join-button {
+        width: 100%;
+        max-width: 320px;
+    }
+    
+    /* Features removed */
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 216px; /* 100% larger on mobile too (108px * 2) */
+    }
+    
+    .main-message {
+        font-size: clamp(12px, 3.5vw, 24px); /* Smaller on mobile */
+    }
+    
+    .sub-message {
+        font-size: clamp(8px, 2vw, 12px);
+    }
+    
+    .waitlist-container {
+        padding: 24px;
+        margin: 0 16px;
+    }
+}
+
+/* Always white background - no dark mode */

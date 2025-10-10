@@ -1,0 +1,49 @@
+{
+  "name": "vo1d-server",
+  "version": "1.0.0",
+  "description": "Servidor backend para vo1d - mensagens efêmeras",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest",
+    "setup-db": "node scripts/setup-database.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-firebase/app": "^23.4.0",
+    "@react-native-firebase/auth": "^23.4.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.3.1",
+    "expo-server-sdk": "^4.0.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.8.1",
+    "firebase-admin": "^13.5.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "redis": "^4.6.8",
+    "socket.io": "^4.7.2",
+    "sqlite3": "^5.1.7",
+    "twilio": "^4.23.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  },
+  "keywords": [
+    "messaging",
+    "ephemeral",
+    "encryption",
+    "privacy",
+    "real-time"
+  ],
+  "author": "vo1d Team",
+  "license": "MIT"
+}
