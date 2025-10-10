@@ -229,27 +229,57 @@ const formatPhoneNumber = (phoneNumber) => {
 
 // Função para executar queries SQLite
 const dbQuery = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) {
+  if (isPostgres) {
+    // PostgreSQL
+    return new Promise(async (resolve, reject) => {
+      try {
+        const client = await db.connect();
+        const result = await client.query(sql, params);
+        client.release();
+        resolve(result.rows);
+      } catch (err) {
         reject(err);
-      } else {
-        resolve(rows);
       }
     });
-  });
+  } else {
+    // SQLite
+    return new Promise((resolve, reject) => {
+      db.all(sql, params, (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
 };
 
 const dbRun = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err) {
-      if (err) {
+  if (isPostgres) {
+    // PostgreSQL
+    return new Promise(async (resolve, reject) => {
+      try {
+        const client = await db.connect();
+        const result = await client.query(sql, params);
+        client.release();
+        resolve({ id: result.insertId || result.rows[0]?.id, changes: result.rowCount });
+      } catch (err) {
         reject(err);
-      } else {
-        resolve({ id: this.lastID, changes: this.changes });
       }
     });
-  });
+  } else {
+    // SQLite
+    return new Promise((resolve, reject) => {
+      db.run(sql, params, function(err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ id: this.lastID, changes: this.changes });
+        }
+      });
+    });
+  }
 };
 
 // Rotas de autenticação (gambiarra removida - usando Firebase)
@@ -1866,7 +1896,7 @@ app.post('/api/waitlist', async (req, res) => {
 
     // Verificar se o número já existe
     const existing = await dbQuery(`
-      SELECT * FROM waitlist WHERE phone_number = ?
+      SELECT * FROM waitlist WHERE phone_number = $1
     `, [phone]);
 
     if (existing.length > 0) {
@@ -1879,7 +1909,7 @@ app.post('/api/waitlist', async (req, res) => {
     // Inserir telefone na waitlist
     await dbRun(`
       INSERT INTO waitlist (phone_number, created_at) 
-      VALUES (?, datetime('now'))
+      VALUES ($1, NOW())
     `, [phone]);
 
     console.log(`✅ Telefone adicionado à waitlist: ${phone}`);
