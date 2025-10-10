@@ -56,6 +56,10 @@ app.get('/health', (req, res) => {
 });
 
 // Conexão com Redis
+console.log('Redis URL:', process.env.REDIS_URL);
+console.log('Redis Host:', process.env.REDIS_HOST);
+console.log('Redis Port:', process.env.REDIS_PORT);
+
 const redisClient = redis.createClient({
   url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
