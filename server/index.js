@@ -11,6 +11,7 @@ const redis = require('redis');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const { Expo } = require('expo-server-sdk');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
@@ -69,15 +70,127 @@ redisClient.connect().then(() => {
   console.error('Erro ao conectar com Redis:', err);
 });
 
-// Conexão com SQLite
-const dbPath = path.join(__dirname, 'data', 'vo1d.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Erro ao conectar com SQLite:', err);
-  } else {
-    console.log('Conectado ao SQLite');
+// Configuração do banco de dados
+let db;
+let isPostgres = false;
+
+if (process.env.DATABASE_URL) {
+  // Produção - PostgreSQL
+  isPostgres = true;
+  db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  console.log('Conectado ao PostgreSQL');
+  
+  // Criar tabelas automaticamente
+  createTables();
+} else {
+  // Desenvolvimento - SQLite
+  const dbPath = path.join(__dirname, 'data', 'vo1d.db');
+  db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Erro ao conectar com SQLite:', err);
+    } else {
+      console.log('Conectado ao SQLite');
+    }
+  });
+}
+
+// Função para criar tabelas no PostgreSQL
+async function createTables() {
+  if (!isPostgres) return;
+  
+  try {
+    const client = await db.connect();
+    
+    // Users table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        phone_number VARCHAR(20) UNIQUE NOT NULL,
+        username VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        invite_code VARCHAR(20),
+        invited_by VARCHAR(20),
+        is_admin BOOLEAN DEFAULT FALSE
+      )
+    `);
+    
+    // Messages table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        sender_id INTEGER NOT NULL,
+        receiver_id INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        encrypted_content TEXT,
+        message_type VARCHAR(20) DEFAULT 'text',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP,
+        is_read BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (sender_id) REFERENCES users (id),
+        FOREIGN KEY (receiver_id) REFERENCES users (id)
+      )
+    `);
+    
+    // Invite codes table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS invite_codes (
+        id SERIAL PRIMARY KEY,
+        code VARCHAR(20) UNIQUE NOT NULL,
+        created_by INTEGER NOT NULL,
+        used_by INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        used_at TIMESTAMP,
+        expires_at TIMESTAMP,
+        is_active BOOLEAN DEFAULT TRUE,
+        FOREIGN KEY (created_by) REFERENCES users (id),
+        FOREIGN KEY (used_by) REFERENCES users (id)
+      )
+    `);
+    
+    // Waitlist table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS waitlist (
+        id SERIAL PRIMARY KEY,
+        phone_number VARCHAR(20) UNIQUE NOT NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        invited_at TIMESTAMP,
+        invite_code VARCHAR(20)
+      )
+    `);
+    
+    // Push tokens table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS push_tokens (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        token TEXT NOT NULL,
+        platform VARCHAR(20) NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    `);
+    
+    // Create indexes
+    await client.query('CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id)');
+    await client.query('CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id)');
+    await client.query('CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number)');
+    await client.query('CREATE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code)');
+    await client.query('CREATE INDEX IF NOT EXISTS idx_waitlist_phone ON waitlist(phone_number)');
+    
+    client.release();
+    console.log('✅ Tabelas criadas com sucesso no PostgreSQL');
+    
+  } catch (error) {
+    console.error('❌ Erro ao criar tabelas:', error);
   }
-});
+}
 
 // Middleware de autenticação
 const authenticateToken = (req, res, next) => {
