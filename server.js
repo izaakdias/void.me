@@ -61,12 +61,23 @@ console.log('Redis Public URL:', process.env.REDIS_PUBLIC_URL);
 console.log('Redis Host:', process.env.REDIS_HOST);
 console.log('Redis Port:', process.env.REDIS_PORT);
 
-// Usar REDIS_URL primeiro, depois REDIS_PUBLIC_URL
-const redisUrl = process.env.REDIS_URL || process.env.REDIS_PUBLIC_URL || 'redis://default:qXCXQBsxthyfdKQMpMmvKpqWKsvmGzkS@shortline.proxy.rlwy.net:19266';
-console.log('Conectando ao Redis com URL:', redisUrl);
+// Configuração completa do Redis
+const redisConfig = {
+  host: process.env.REDIS_HOST || 'shortline.proxy.rlwy.net',
+  port: process.env.REDIS_PORT || 19266,
+  password: process.env.REDIS_PASSWORD || 'qXCXQBsxthyfdKQMpMmvKpqWKsvmGzkS',
+  username: process.env.REDIS_USER || 'default'
+};
+
+console.log('Configuração Redis:', redisConfig);
 
 const redisClient = redis.createClient({
-  url: redisUrl
+  socket: {
+    host: redisConfig.host,
+    port: redisConfig.port
+  },
+  password: redisConfig.password,
+  username: redisConfig.username
 });
 
 redisClient.on('error', (err) => {
