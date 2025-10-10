@@ -2,10 +2,11 @@
 const API_CONFIG = {
   // URLs do backend
   LOCAL: 'http://localhost:3000',
+  VPS: 'http://147.93.66.253:3000',
   RAILWAY: 'https://vo1d-expo-new-production-b90a.up.railway.app',
   
   // Ambiente atual (mudar para 'production' quando deployar)
-  ENVIRONMENT: 'development', // 'development' ou 'production'
+  ENVIRONMENT: 'production', // 'development' ou 'production'
   
   // Timeout das requisições
   TIMEOUT: 10000,
@@ -19,7 +20,7 @@ const API_CONFIG = {
 // Função para obter a URL base
 export const getBaseURL = () => {
   return API_CONFIG.ENVIRONMENT === 'production' 
-    ? API_CONFIG.RAILWAY 
+    ? API_CONFIG.VPS 
     : API_CONFIG.LOCAL;
 };
 
