@@ -55,6 +55,30 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Test PostgreSQL connection
+app.get('/test-db', async (req, res) => {
+  try {
+    if (!isPostgres) {
+      return res.json({ error: 'Not using PostgreSQL' });
+    }
+    
+    const client = await db.connect();
+    const result = await client.query('SELECT NOW() as current_time');
+    client.release();
+    
+    res.json({
+      status: 'PostgreSQL connected',
+      current_time: result.rows[0].current_time,
+      isPostgres: isPostgres
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'PostgreSQL connection failed',
+      message: error.message
+    });
+  }
+});
+
 // Conexão com Redis
 const redisClient = redis.createClient({
   url: process.env.REDIS_URL || 'redis://localhost:6379'
