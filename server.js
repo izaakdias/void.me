@@ -66,7 +66,17 @@ const redisUrl = process.env.REDIS_URL || 'redis://default:qXCXQBsxthyfdKQMpMmvK
 console.log('Conectando ao Redis com URL:', redisUrl);
 
 const redisClient = redis.createClient({
-  url: redisUrl
+  url: redisUrl,
+  socket: {
+    reconnectStrategy: (retries) => {
+      if (retries > 20) {
+        console.log('Redis: Máximo de tentativas de reconexão atingido');
+        return new Error('Máximo de tentativas de reconexão atingido');
+      }
+      console.log(`Redis: Tentativa de reconexão ${retries}`);
+      return Math.min(retries * 50, 500);
+    }
+  }
 });
 
 redisClient.on('error', (err) => {
@@ -75,6 +85,14 @@ redisClient.on('error', (err) => {
 
 redisClient.on('connect', () => {
   console.log('Redis conectado com sucesso!');
+});
+
+redisClient.on('reconnecting', () => {
+  console.log('Redis reconectando...');
+});
+
+redisClient.on('ready', () => {
+  console.log('Redis pronto para uso!');
 });
 
 redisClient.connect().then(() => {
