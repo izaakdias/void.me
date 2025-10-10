@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Use environment variable or fallback to localhost for development
             const backendUrl = window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : 'https://your-backend-url.com';
+                : 'https://vo1d-backend-production.up.railway.app';
             
             const response = await fetch(`${backendUrl}/api/waitlist`, {
                 method: 'POST',
