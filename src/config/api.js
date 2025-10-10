@@ -5,7 +5,7 @@ const API_CONFIG = {
   RAILWAY: 'https://vo1d-expo-new-production-b90a.up.railway.app',
   
   // Ambiente atual (mudar para 'production' quando deployar)
-  ENVIRONMENT: 'development', // 'development' ou 'production'
+  ENVIRONMENT: 'production', // 'development' ou 'production'
   
   // Timeout das requisições
   TIMEOUT: 10000,
