@@ -12,55 +12,64 @@ npm install
 npm start
 
 # Start backend server
-cd server && npm start
+cd server && npm install && npm start
 ```
 
 ## 📁 Project Structure
 
 ```
-vo1d-expo-new/
+vo1d/
 ├── src/                    # React Native app source
+│   ├── components/         # Reusable components
+│   ├── screens/           # App screens
+│   ├── services/          # API services
+│   ├── config/            # App configuration
+│   └── assets/            # App assets
 ├── server/                 # Backend API server
+│   ├── config/            # Server configuration
+│   ├── scripts/           # Database scripts
+│   └── data/              # Database files
+├── landing/                # Landing page
 ├── docs/                   # Documentation
-├── scripts/                # Utility scripts
-├── config/                 # Configuration files
-├── assets/                 # App assets
-└── backup/                 # Backup files
+│   ├── guides/            # Setup guides
+│   ├── api/               # API documentation
+│   └── setup/             # Setup scripts
+└── config/                 # Global configuration
 ```
 
-## 🔧 Development
+## 🔧 Tech Stack
 
 - **Frontend:** React Native + Expo
 - **Backend:** Node.js + Express
 - **Database:** SQLite (dev) / PostgreSQL (prod)
-- **Cache:** Redis
 - **Push Notifications:** Expo Push API
 - **SMS:** Twilio
 - **Encryption:** AES-256 + SHA-256
+- **Landing Page:** Vanilla HTML/CSS/JS
 
 ## 📚 Documentation
 
-- [Setup Guide](docs/SETUP.md)
-- [API Documentation](docs/API.md)
-- [Production Guide](docs/PRODUCTION.md)
-- [Push Notifications](docs/EXPO_PUSH_GUIDE.md)
+- [Setup Guide](docs/guides/SETUP.md)
+- [API Documentation](docs/api/)
+- [Production Guide](docs/guides/PRODUCTION.md)
+- [Push Notifications](docs/guides/EXPO_PUSH_GUIDE.md)
 
-## 🛠️ Scripts
+## 🛠️ Development Scripts
 
 ```bash
-# Reset test data
-./scripts/reset-test-code.sh
+# Test system integration
+node scripts/test-integration.js
 
 # Test push notifications
 node scripts/test-push-notifications.js
 
-# Test system integration
-./scripts/test-system.sh
+# Reset test data
+node scripts/reset-test-data.js
 ```
 
-## 🚀 Production
+## 🚀 Production Deployment
 
-See [Production Setup Guide](docs/PRODUCTION.md) for deployment instructions.
+See [Production Setup Guide](docs/guides/PRODUCTION.md) for deployment instructions.
 
 ## 📄 License
 
