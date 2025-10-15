@@ -32,8 +32,7 @@ vo1d/
 ├── landing/                # Landing page
 ├── docs/                   # Documentation
 │   ├── guides/            # Setup guides
-│   ├── api/               # API documentation
-│   └── setup/             # Setup scripts
+│   └── api/               # API documentation
 └── config/                 # Global configuration
 ```
 
@@ -64,7 +63,7 @@ node scripts/test-integration.js
 node scripts/test-push-notifications.js
 
 # Reset test data
-node scripts/reset-test-data.js
+node server/scripts/reset-test-data.js
 ```
 
 ## Production Deployment
