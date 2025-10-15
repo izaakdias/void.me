@@ -12,15 +12,15 @@ cd server
 
 # Verificar se o banco SQLite existe
 if [ -f "data/vo1d.db" ]; then
-    echo "📊 Encontrado banco SQLite local"
+    echo "Encontrado banco SQLite local"
     
     # Backup do banco atual
-    echo "💾 Criando backup do banco atual..."
+    echo "Criando backup do banco atual..."
     cp data/vo1d.db data/vo1d_backup_$(date +%Y%m%d_%H%M%S).db
-    echo "✅ Backup criado"
+    echo "Backup criado"
     
     # Limpar dados das tabelas principais
-    echo "🗑️ Limpando dados das tabelas..."
+    echo "Limpando dados das tabelas..."
     
     sqlite3 data/vo1d.db << EOF
 -- Limpar mensagens
@@ -57,16 +57,16 @@ SELECT 'Waitlist restante:', COUNT(*) FROM waitlist;
 VACUUM;
 EOF
 
-    echo "✅ Banco SQLite limpo com sucesso!"
+    echo "Banco SQLite limpo com sucesso!"
     
 else
-    echo "⚠️ Banco SQLite não encontrado em data/vo1d.db"
+    echo "Banco SQLite não encontrado em data/vo1d.db"
 fi
 
 # Se estiver usando PostgreSQL (produção)
 if [ ! -z "$DATABASE_URL" ]; then
-    echo "🐘 Detectado PostgreSQL em produção"
-    echo "⚠️ ATENÇÃO: Limpeza em produção requer confirmação manual"
+    echo "Detectado PostgreSQL em produção"
+    echo "ATENÇÃO: Limpeza em produção requer confirmação manual"
     echo "Execute os seguintes comandos SQL no seu banco PostgreSQL:"
     echo ""
     echo "-- Limpar dados (CUIDADO EM PRODUÇÃO!)"
@@ -87,7 +87,7 @@ if [ ! -z "$DATABASE_URL" ]; then
 fi
 
 echo ""
-echo "🎯 Próximos passos:"
+echo "Próximos passos:"
 echo "1. Reinicie o servidor: npm start"
 echo "2. Teste o registro de novos usuários"
 echo "3. Teste o envio de mensagens"

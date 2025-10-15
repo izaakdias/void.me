@@ -1,8 +1,8 @@
-# 📱 vo1d - Secure Messaging App
+# vo1d - Secure Messaging App
 
 > **High-level privacy chat with ephemeral messages and end-to-end encryption**
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install dependencies
@@ -15,7 +15,7 @@ npm start
 cd server && npm install && npm start
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 vo1d/
@@ -37,7 +37,7 @@ vo1d/
 └── config/                 # Global configuration
 ```
 
-## 🔧 Tech Stack
+## Tech Stack
 
 - **Frontend:** React Native + Expo
 - **Backend:** Node.js + Express
@@ -47,14 +47,14 @@ vo1d/
 - **Encryption:** AES-256 + SHA-256
 - **Landing Page:** Vanilla HTML/CSS/JS
 
-## 📚 Documentation
+## Documentation
 
 - [Setup Guide](docs/guides/SETUP.md)
 - [API Documentation](docs/api/)
 - [Production Guide](docs/guides/PRODUCTION.md)
 - [Push Notifications](docs/guides/EXPO_PUSH_GUIDE.md)
 
-## 🛠️ Development Scripts
+## Development Scripts
 
 ```bash
 # Test system integration
@@ -67,10 +67,10 @@ node scripts/test-push-notifications.js
 node scripts/reset-test-data.js
 ```
 
-## 🚀 Production Deployment
+## Production Deployment
 
 See [Production Setup Guide](docs/guides/PRODUCTION.md) for deployment instructions.
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) for details.

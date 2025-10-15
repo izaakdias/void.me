@@ -476,11 +476,11 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert(`📱 SMS enviado com sucesso para ${phone}!\n\nCódigo: ${data.inviteCode}\n\nO usuário receberá o código via SMS e será removido da waitlist.`);
+                    alert(`SMS enviado com sucesso para ${phone}!\n\nCódigo: ${data.inviteCode}\n\nO usuário receberá o código via SMS e será removido da waitlist.`);
                     // Recarregar a lista para mostrar as mudanças
                     loadWaitlist();
                 } else if (data.error === 'SMS_FAILED') {
-                    const retry = confirm(`⚠️ Código gerado mas falha ao enviar SMS!\n\nCódigo: ${data.inviteCode}\n\nTelefone: ${phone}\n\nDeseja tentar reenviar o SMS?`);
+                    const retry = confirm(`Código gerado mas falha ao enviar SMS!\n\nCódigo: ${data.inviteCode}\n\nTelefone: ${phone}\n\nDeseja tentar reenviar o SMS?`);
                     if (retry) {
                         await resendSMS(phone, data.inviteCode);
                     }
@@ -527,7 +527,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert(`📱 SMS reenviado com sucesso para ${phone}!`);
+                    alert(`SMS reenviado com sucesso para ${phone}!`);
                 } else {
                     throw new Error(data.message);
                 }
@@ -538,7 +538,7 @@
         }
 
         async function clearDatabase() {
-            if (!confirm('⚠️ ATENÇÃO: Esta ação irá limpar TODOS os dados do banco!\n\nIsso inclui:\n- Todos os usuários\n- Todas as mensagens\n- Todas as conversas\n- Todos os convites\n- Toda a waitlist\n\nTem certeza que deseja continuar?')) {
+            if (!confirm('ATENÇÃO: Esta ação irá limpar TODOS os dados do banco!\n\nIsso inclui:\n- Todos os usuários\n- Todas as mensagens\n- Todas as conversas\n- Todos os convites\n- Toda a waitlist\n\nTem certeza que deseja continuar?')) {
                 return;
             }
 
