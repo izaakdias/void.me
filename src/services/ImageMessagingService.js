@@ -59,7 +59,7 @@ class ImageMessagingService {
       };
 
       // Enviar via API
-      const response = await axios.post(`${Config.SERVER_URL || 'http://192.168.0.33:3000'}/messages/send-image`, messageData, {
+      const response = await axios.post(`${Config.SERVER_URL}/messages/send-image`, messageData, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ class ImageMessagingService {
       MonitoringService.startTimer('image_receive');
 
       // Solicitar conteúdo da imagem
-      const response = await axios.get(`${Config.SERVER_URL || 'http://192.168.0.33:3000'}/messages/image/${messageId}`, {
+      const response = await axios.get(`${Config.SERVER_URL}/messages/image/${messageId}`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },
@@ -154,7 +154,7 @@ class ImageMessagingService {
   // Obter chave pública do destinatário
   static async getRecipientPublicKey(recipientId) {
     try {
-      const response = await axios.get(`${Config.SERVER_URL || 'http://192.168.0.33:3000'}/users/${recipientId}/public-key`, {
+      const response = await axios.get(`${Config.SERVER_URL}/users/${recipientId}/public-key`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },
@@ -174,7 +174,7 @@ class ImageMessagingService {
   // Obter thumbnail da imagem
   static async getImageThumbnail(messageId) {
     try {
-      const response = await axios.get(`${Config.SERVER_URL || 'http://192.168.0.33:3000'}/messages/image/${messageId}/thumbnail`, {
+      const response = await axios.get(`${Config.SERVER_URL}/messages/image/${messageId}/thumbnail`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },
@@ -197,7 +197,7 @@ class ImageMessagingService {
   // Marcar imagem como visualizada
   static async markImageAsViewed(messageId) {
     try {
-      await axios.post(`${Config.SERVER_URL || 'http://192.168.0.33:3000'}/messages/image/${messageId}/viewed`, {}, {
+      await axios.post(`${Config.SERVER_URL}/messages/image/${messageId}/viewed`, {}, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },
@@ -210,7 +210,7 @@ class ImageMessagingService {
   // Obter estatísticas de imagens
   static async getImageStats() {
     try {
-      const response = await axios.get(`${Config.SERVER_URL || 'http://192.168.0.33:3000'}/messages/image/stats`, {
+      const response = await axios.get(`${Config.SERVER_URL}/messages/image/stats`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },

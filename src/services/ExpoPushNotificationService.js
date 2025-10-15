@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
+import Config from '../config/Config';
 
 class ExpoPushNotificationService {
   static instance = null;
@@ -75,7 +76,7 @@ class ExpoPushNotificationService {
       
       if (user) {
         // Enviar token para o backend
-        const response = await fetch('http://localhost:3000/api/save-push-token', {
+        const response = await fetch(`${Config.SERVER_URL}/api/save-push-token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

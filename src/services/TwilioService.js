@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Config from '../config/Config';
 
 class TwilioService {
   static instance = null;
@@ -19,7 +20,7 @@ class TwilioService {
       console.log('📱 Chamando backend Twilio REAL...');
       
       // Chamar backend que usa Twilio
-      const response = await axios.post(`http://192.168.0.33:3000/auth/send-otp`, {
+      const response = await axios.post(`${Config.SERVER_URL}/api/send-otp`, {
         phoneNumber: phoneNumber
       });
       
@@ -48,7 +49,7 @@ class TwilioService {
       console.log('📱 Chamando backend Twilio REAL...');
       
       // Chamar backend que usa Twilio
-      const response = await axios.post(`http://192.168.0.33:3000/auth/verify-otp`, {
+      const response = await axios.post(`${Config.SERVER_URL}/api/verify-otp`, {
         phoneNumber: phoneNumber,
         otpCode: otpCode,
         sessionId: sessionId

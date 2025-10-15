@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - void.</title>
+    <meta name="description" content="Baixe o app void. para Android">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .download-container {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .download-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: block;
+            background: #000;
+            padding: 15px;
+        }
+        
+        .app-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .app-version {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .download-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .download-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .download-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .download-info h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .download-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .download-info li {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .download-info li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #FFC107;
+        }
+        
+        .back-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 1rem;
+            margin-top: 30px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles.js container -->
+    <div id="particles-js"></div>
+    
+    <main class="hero">
+        <div class="container">
+            <div class="download-container">
+                <div class="download-card">
+                    <img src="Cloq(2).png" alt="void. App" class="app-icon">
+                    <h1 class="app-name">void.</h1>
+                    <p class="app-version">Versão 1.0.4</p>
+                    
+                    <a href="/downloads/vo1d-v1.0.4.apk" class="download-button" download="vo1d-v1.0.4.apk">
+                        📱 Baixar APK
+                    </a>
+                    
+                    <div class="download-info">
+                        <h3>📋 Informações do App</h3>
+                        <ul>
+                            <li>Tamanho: ~25 MB</li>
+                            <li>Android 6.0+ (API 23+)</li>
+                            <li>Arquitetura: ARM64, ARMv7</li>
+                            <li>Última atualização: <span id="lastUpdate"></span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <strong>⚠️ Importante:</strong> Para instalar este APK, você precisa habilitar "Fontes desconhecidas" nas configurações do Android.
+                    </div>
+                </div>
+                
+                <a href="/" class="back-link">← Voltar para a página inicial</a>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="particles.js"></script>
+    
+    <script>
+        // Atualizar data da última atualização
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleDateString('pt-BR');
+        
+        // Detectar dispositivo e mostrar instruções específicas
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isAndroid = userAgent.includes('android');
+        
+        if (isAndroid) {
+            const warningBox = document.querySelector('.warning-box');
+            warningBox.innerHTML = `
+                <strong>📱 Instruções para Android:</strong><br>
+                1. Toque em "Baixar APK"<br>
+                2. Quando aparecer o aviso, toque em "OK"<br>
+                3. Vá em Configurações > Segurança > Fontes desconhecidas<br>
+                4. Ative a opção para este navegador<br>
+                5. Volte e instale o APK
+            `;
+        }
+        
+        // Tracking do download
+        document.querySelector('.download-button').addEventListener('click', function() {
+            // Analytics tracking (substitua por seu código)
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'download', {
+                    'event_category': 'app',
+                    'event_label': 'vo1d-apk'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

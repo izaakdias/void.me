@@ -25,11 +25,7 @@ const ChatScreen = ({navigation, route}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [openedMessages, setOpenedMessages] = useState({});
   const [fullscreenImage, setFullscreenImage] = useState(null);
-  const [messageTTL, setMessageTTL] = useState(5); // TTL em segundos
-  const [showTTLSlider, setShowTTLSlider] = useState(false);
-  const [isAdjustingTTL, setIsAdjustingTTL] = useState(false);
-  const [initialTouchY, setInitialTouchY] = useState(0);
-  const [initialTTL, setInitialTTL] = useState(5);
+  const messageTTL = 5; // TTL fixo em segundos
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [destroyedMessages, setDestroyedMessages] = useState({});
 
@@ -129,30 +125,6 @@ const ChatScreen = ({navigation, route}) => {
     setSelectedImage(null);
   };
 
-  const handleTouchStart = (event) => {
-    setShowTTLSlider(true);
-    setIsAdjustingTTL(true);
-    setInitialTouchY(event.nativeEvent.pageY);
-    setInitialTTL(messageTTL);
-  };
-
-  const handleTouchMove = (event) => {
-    if (!isAdjustingTTL) return;
-    
-    const currentY = event.nativeEvent.pageY;
-    const deltaY = initialTouchY - currentY; // Movimento para cima = positivo
-    
-    // Converter movimento vertical em tempo (cada 12px = 1 segundo) - mais suave
-    const timeDelta = Math.round(deltaY / 12);
-    const newTTL = Math.max(1, Math.min(60, initialTTL + timeDelta));
-    
-    setMessageTTL(newTTL);
-  };
-
-  const handleTouchEnd = () => {
-    setShowTTLSlider(false);
-    setIsAdjustingTTL(false);
-  };
 
   const handleAddImage = () => {
     setShowImageMenu(true);
@@ -499,26 +471,6 @@ const ChatScreen = ({navigation, route}) => {
       {/* Input de mensagem */}
       <View style={[styles.inputContainer, { marginBottom: keyboardHeight }]}>
         
-        {/* Slider TTL Vertical */}
-        {showTTLSlider && (
-          <View style={styles.ttlSliderOverlay}>
-            <View style={styles.sliderTrack}>
-              <View 
-                style={[
-                  styles.sliderFill, 
-                  { height: `${(messageTTL / 60) * 100}%` }
-                ]} 
-              />
-              <View 
-                style={[
-                  styles.sliderThumb,
-                  { bottom: `${(messageTTL / 60) * 100}%` }
-                ]} 
-              />
-            </View>
-            <Text style={styles.sliderValue}>{Math.round(messageTTL)}s</Text>
-          </View>
-        )}
 
         {/* Prévia da imagem selecionada */}
         {selectedImage && (
@@ -551,24 +503,16 @@ const ChatScreen = ({navigation, route}) => {
             maxLength={1000}
           />
           
-          <View style={styles.sendButtonContainer}>
-            <View 
-              style={styles.gestureContainer}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}>
-              <TouchableOpacity
-                style={[
-                  styles.sendButton,
-                  (!newMessage.trim() && !selectedImage) && styles.sendButtonDisabled,
-                ]}
-                onPress={handleSendMessage}
-                disabled={!newMessage.trim() && !selectedImage}
-                activeOpacity={0.8}>
-                <Text style={styles.sendButtonText}>{messageTTL}s</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TouchableOpacity
+            style={[
+              styles.sendButton,
+              (!newMessage.trim() && !selectedImage) && styles.sendButtonDisabled,
+            ]}
+            onPress={handleSendMessage}
+            disabled={!newMessage.trim() && !selectedImage}
+            activeOpacity={0.8}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
         </View>
         
         {/* Aviso de segurança */}
@@ -800,21 +744,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginLeft: 10,
   },
-  sendButtonContainer: {
-    marginLeft: 10,
-  },
-  gestureContainer: {
-    backgroundColor: 'transparent',
-  },
-  gestureOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'transparent',
-    borderRadius: 20,
-  },
   sendButtonDisabled: {
     opacity: 0.5,
   },
@@ -962,64 +891,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
     color: '#ffffff',
-  },
-  // TTL Slider Styles - Custom Visual
-  ttlSliderOverlay: {
-    position: 'absolute',
-    bottom: 100,
-    right: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-    borderRadius: 15,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    alignItems: 'center',
-    width: 70,
-    height: 220,
-    zIndex: 1000,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  sliderTrack: {
-    width: 6,
-    height: 160,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 3,
-    position: 'relative',
-  },
-  sliderFill: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#ffffff',
-    borderRadius: 3,
-  },
-  sliderThumb: {
-    position: 'absolute',
-    width: 20,
-    height: 20,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    left: -7,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  sliderValue: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginTop: 15,
-    textAlign: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
   },
 });
 

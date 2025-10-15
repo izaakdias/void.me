@@ -216,7 +216,10 @@
             <p>Gerencie a lista de espera e envie convites para novos usuários</p>
         </div>
 
-        <button class="refresh-btn" onclick="loadWaitlist()">🔄 Atualizar Lista</button>
+        <div style="margin-bottom: 20px;">
+            <button class="refresh-btn" onclick="loadWaitlist()">🔄 Atualizar Lista</button>
+            <button class="refresh-btn" onclick="clearDatabase()" style="background: #ef4444; margin-left: 10px;">🧹 Limpar Banco</button>
+        </div>
 
         <div class="stats-grid">
             <div class="stat-card">
@@ -230,6 +233,38 @@
             <div class="stat-card">
                 <div class="stat-number" id="weekCount">-</div>
                 <div class="stat-label">Esta Semana</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">-</div>
+                <div class="stat-label">Usuários Registrados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalMessages">-</div>
+                <div class="stat-label">Mensagens Totais</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="messagesSent">-</div>
+                <div class="stat-label">Mensagens Enviadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="messagesReceived">-</div>
+                <div class="stat-label">Mensagens Recebidas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="redisMessages">-</div>
+                <div class="stat-label">Mensagens no Redis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalConversations">-</div>
+                <div class="stat-label">Conversas Ativas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalInvites">-</div>
+                <div class="stat-label">Convites Enviados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="redisStatus">-</div>
+                <div class="stat-label">Status Redis</div>
             </div>
         </div>
 
@@ -246,24 +281,52 @@
                 </div>
             </div>
         </div>
+
+        <div class="users-table">
+            <div class="table-header">
+                <h2>Usuários Registrados</h2>
+            </div>
+            <div class="table-content">
+                <div id="usersContent">
+                    <div class="empty-state">
+                        <h3>Carregando...</h3>
+                        <p>Aguarde enquanto buscamos os dados dos usuários</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const BACKEND_URL = 'http://localhost:3000';
+        const BACKEND_URL = 'http://147.93.66.253:3000';
 
         async function loadWaitlist() {
             try {
-                const response = await fetch(`${BACKEND_URL}/api/waitlist/stats`);
-                const data = await response.json();
+                // Carregar stats da waitlist
+                const waitlistResponse = await fetch(`${BACKEND_URL}/api/waitlist/stats`);
+                const waitlistData = await waitlistResponse.json();
                 
-                if (data.success) {
-                    updateStats(data.stats);
-                    updateWaitlistTable(data.waitlist);
+                // Carregar métricas do sistema
+                const metricsResponse = await fetch(`${BACKEND_URL}/api/metrics`);
+                const metricsData = await metricsResponse.json();
+                
+                // Carregar lista de usuários
+                const usersResponse = await fetch(`${BACKEND_URL}/api/users`);
+                const usersData = await usersResponse.json();
+                
+                if (waitlistData.success) {
+                    updateStats(waitlistData.stats, metricsData);
+                    updateWaitlistTable(waitlistData.waitlist);
                 } else {
-                    throw new Error(data.message);
+                    throw new Error(waitlistData.message);
                 }
+                
+                if (usersData.success) {
+                    updateUsersTable(usersData.users);
+                }
+                
             } catch (error) {
-                console.error('Erro ao carregar waitlist:', error);
+                console.error('Erro ao carregar dados:', error);
                 document.getElementById('waitlistContent').innerHTML = `
                     <div class="empty-state">
                         <h3>Erro ao carregar dados</h3>
@@ -273,10 +336,78 @@
             }
         }
 
-        function updateStats(stats) {
+        function updateStats(stats, metrics = {}) {
             document.getElementById('totalCount').textContent = stats.total || 0;
             document.getElementById('todayCount').textContent = stats.today || 0;
             document.getElementById('weekCount').textContent = stats.thisWeek || 0;
+            
+            // Métricas do sistema
+            document.getElementById('totalUsers').textContent = metrics.totalUsers || 0;
+            document.getElementById('totalMessages').textContent = metrics.totalMessages || 0;
+            document.getElementById('totalInvites').textContent = metrics.totalInvites || 0;
+            document.getElementById('totalConversations').textContent = metrics.totalConversations || 0;
+            
+            // Estatísticas de mensagens detalhadas
+            if (metrics.messagesStats) {
+                document.getElementById('messagesSent').textContent = metrics.messagesStats.sentByUsers || 0;
+                document.getElementById('messagesReceived').textContent = metrics.messagesStats.receivedByUsers || 0;
+                document.getElementById('redisMessages').textContent = metrics.messagesStats.redisMessages || 0;
+            } else {
+                document.getElementById('messagesSent').textContent = '-';
+                document.getElementById('messagesReceived').textContent = '-';
+                document.getElementById('redisMessages').textContent = '-';
+            }
+            
+            // Status do Redis
+            const redisStatus = document.getElementById('redisStatus');
+            if (metrics.redisConnected) {
+                redisStatus.textContent = '🟢 Online';
+                redisStatus.style.color = '#10b981';
+            } else {
+                redisStatus.textContent = '🔴 Offline';
+                redisStatus.style.color = '#ef4444';
+            }
+        }
+
+        function updateUsersTable(users) {
+            const usersContent = document.getElementById('usersContent');
+            
+            if (!users || users.length === 0) {
+                usersContent.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Nenhum usuário encontrado</h3>
+                        <p>Ainda não há usuários registrados</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Telefone</th>
+                            <th>Nome</th>
+                            <th>Data de Cadastro</th>
+                            <th>Convites Enviados</th>
+                            <th>Convites Usados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${users.map(user => `
+                            <tr>
+                                <td>${user.phone || '-'}</td>
+                                <td>${user.name || '-'}</td>
+                                <td>${new Date(user.created_at).toLocaleString('pt-BR')}</td>
+                                <td><span class="badge">${user.invites_sent || 0}</span></td>
+                                <td><span class="badge success">${user.invites_used || 0}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            usersContent.innerHTML = tableHTML;
         }
 
         function updateWaitlistTable(waitlist) {
@@ -403,6 +534,43 @@
             } catch (error) {
                 console.error('Erro ao reenviar SMS:', error);
                 alert('Erro ao reenviar SMS. Tente novamente.');
+            }
+        }
+
+        async function clearDatabase() {
+            if (!confirm('⚠️ ATENÇÃO: Esta ação irá limpar TODOS os dados do banco!\n\nIsso inclui:\n- Todos os usuários\n- Todas as mensagens\n- Todas as conversas\n- Todos os convites\n- Toda a waitlist\n\nTem certeza que deseja continuar?')) {
+                return;
+            }
+
+            const button = event.target;
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Limpando...';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/clear-database`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Banco de dados limpo com sucesso!\n\nTodos os dados foram removidos e o sistema está pronto para novos testes.');
+                    // Recarregar os dados
+                    loadWaitlist();
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao limpar banco:', error);
+                alert('❌ Erro ao limpar banco de dados: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = originalText;
             }
         }
 

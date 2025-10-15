@@ -52,35 +52,30 @@ body {
 
 /* Logo */
 .logo-container {
-    margin-bottom: 80px;
+    margin-bottom: 40px;
+    text-align: center;
 }
 
 .logo {
     display: inline-block;
 }
 
-.logo-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 288px; /* 100% larger (144px * 2) */
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    color: #000000;
-    position: relative;
-    font-style: normal;
+.logo-image {
+    height: 360px; /* 60px * 6 = 360px (600% maior) */
+    width: auto;
+    max-width: 1200px; /* 200px * 6 */
 }
 
 /* Removed underline to match the clean logo design */
 
-/* Message Container - Positioned above logo without affecting logo position */
+/* Message Container - Positioned below logo */
 .message-container {
-    position: absolute;
-    top: calc(20% + 275px); /* Position from top of viewport + 275px down (300px - 25px) */
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 800px;
-    width: 100%;
-    z-index: 10; /* Ensure it's above logo */
+    margin-top: 50px;
     text-align: center;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .main-message {
@@ -267,6 +262,8 @@ body {
     margin-top: 16px;
 }
 
+/* (Removido) Botão de download destacado para manter minimalismo */
+
 .social-link {
     text-align: center;
     margin-top: 8px;
@@ -380,8 +377,18 @@ body {
 }
 
 @media (max-width: 480px) {
-    .logo-text {
-        font-size: 216px; /* 100% larger on mobile too (108px * 2) */
+    .logo-image {
+        height: 200px; /* Reduzido para mobile */
+        max-width: 300px;
+    }
+    
+    .logo-container {
+        margin-bottom: 30px;
+    }
+    
+    .message-container {
+        margin-top: 30px;
+        margin-bottom: 40px;
     }
     
     .main-message {

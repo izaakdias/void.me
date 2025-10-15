@@ -4,6 +4,7 @@ import {EncryptionService} from './EncryptionService';
 import {TwilioService} from './TwilioService';
 import axios from 'axios';
 import Constants from 'expo-constants';
+import Config from '../config/Config';
 
 class AuthService {
   static instance = null;
@@ -70,7 +71,7 @@ class AuthService {
       
       // Usar Twilio REAL (envia SMS real)
       const result = await TwilioService.sendOTP(this.formatPhoneNumber(phoneNumber));
-      console.log('📨 Resultado do Firebase:', result);
+      console.log('📨 Resultado do Twilio:', result);
       
       return {
         success: true,
@@ -96,7 +97,7 @@ class AuthService {
       console.log('🔥 Verificando com Twilio REAL...');
       
       // Usar Twilio REAL
-      const result = await TwilioService.verifyOTP(phoneNumber, otpCode, sessionId);
+      const result = await TwilioService.verifyOTP(this.formatPhoneNumber(phoneNumber), otpCode, sessionId);
       console.log('📨 Resultado do Twilio:', result);
       
       if (result.success) {
@@ -147,7 +148,7 @@ class AuthService {
   // Validar código de convite
   static async validateInviteCode(inviteCode) {
     try {
-      const response = await axios.post(`${'http://192.168.0.33:3000'}/auth/validate-invite`, {
+      const response = await axios.post(`${Config.SERVER_URL}/auth/validate-invite`, {
         inviteCode: inviteCode.toUpperCase(),
       });
 
@@ -169,7 +170,7 @@ class AuthService {
   // Finalizar registro com código de convite
   static async completeRegistration(inviteCode, userData) {
     try {
-      const response = await axios.post(`${'http://192.168.0.33:3000'}/auth/complete-registration`, {
+      const response = await axios.post(`${Config.SERVER_URL}/auth/complete-registration`, {
         inviteCode: inviteCode.toUpperCase(),
         userData,
       }, {
@@ -201,7 +202,7 @@ class AuthService {
   // Gerar código de convite para o usuário atual
   static async generateInviteCode() {
     try {
-      const response = await axios.post(`${'http://192.168.0.33:3000'}/auth/generate-invite`, {}, {
+      const response = await axios.post(`${Config.SERVER_URL}/auth/generate-invite`, {}, {
         headers: {
           'Authorization': `Bearer ${await SecureStore.getItemAsync('auth_token')}`,
         },
@@ -265,12 +266,17 @@ class AuthService {
 
   // Formatar número de telefone
   static formatPhoneNumber(phoneNumber) {
-    // Remover caracteres não numéricos
-    let cleanNumber = phoneNumber.replace(/\D/g, '');
+    // Remover caracteres não numéricos exceto o +
+    let cleanNumber = phoneNumber.replace(/[^\d+]/g, '');
     
-    // Adicionar código do país se não tiver
-    if (!cleanNumber.startsWith('55') && cleanNumber.length === 11) {
-      cleanNumber = '55' + cleanNumber;
+    // Garantir que tenha o + no início
+    if (!cleanNumber.startsWith('+')) {
+      // Se não tem +, adicionar
+      if (cleanNumber.startsWith('55')) {
+        cleanNumber = '+' + cleanNumber;
+      } else if (cleanNumber.length === 11) {
+        cleanNumber = '+55' + cleanNumber;
+      }
     }
     
     return cleanNumber;
@@ -284,7 +290,7 @@ class AuthService {
   // Renovar token
   static async refreshToken() {
     try {
-      const response = await axios.post(`${'http://192.168.0.33:3000'}/auth/refresh`, {}, {
+      const response = await axios.post(`${Config.SERVER_URL}/auth/refresh`, {}, {
         headers: {
           'Authorization': `Bearer ${await SecureStore.getItemAsync('auth_token')}`,
         },

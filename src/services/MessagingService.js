@@ -4,7 +4,7 @@ import {EncryptionService} from './EncryptionService';
 import {AuthService} from './AuthService';
 import OneSignalNotificationService from './OneSignalNotificationService';
 import MonitoringService from './MonitoringService';
-import Config from 'react-native-config';
+import Config from '../config/Config';
 
 class MessagingService {
   static instance = null;
@@ -26,7 +26,7 @@ class MessagingService {
       // Importar Socket.IO dinamicamente
       const io = require('socket.io-client');
       
-      MessagingService.socket = io('http://192.168.0.33:3000', {
+      MessagingService.socket = io(Config.SERVER_URL, {
         auth: {
           token,
         },
@@ -140,7 +140,7 @@ class MessagingService {
   // Obter chave pública do destinatário
   static async getRecipientPublicKey(recipientId) {
     try {
-      const response = await axios.get(`${'http://192.168.0.33:3000'}/users/${recipientId}/public-key`, {
+      const response = await axios.get(`${Config.SERVER_URL}/users/${recipientId}/public-key`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },
@@ -265,7 +265,7 @@ class MessagingService {
   // Obter lista de contatos/conversas
   static async getConversations() {
     try {
-      const response = await axios.get(`${'http://192.168.0.33:3000'}/conversations`, {
+      const response = await axios.get(`${Config.SERVER_URL}/conversations`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },
@@ -285,7 +285,7 @@ class MessagingService {
   // Obter histórico de mensagens (apenas mensagens não destruídas)
   static async getMessageHistory(conversationId) {
     try {
-      const response = await axios.get(`${'http://192.168.0.33:3000'}/conversations/${conversationId}/messages`, {
+      const response = await axios.get(`${Config.SERVER_URL}/conversations/${conversationId}/messages`, {
         headers: {
           'Authorization': `Bearer ${await AuthService.getAuthToken()}`,
         },

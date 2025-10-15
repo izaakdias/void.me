@@ -110,7 +110,10 @@ const OTPVerificationScreen = ({navigation, route}) => {
     }
   };
 
-  const handleResendOTP = () => {
+  const handleResendOTP = async () => {
+    console.log('🔄 Iniciando resend OTP...');
+    console.log('📞 Phone:', phoneNumber);
+    
     setTimeLeft(60);
     setCanResend(false);
     
@@ -126,7 +129,22 @@ const OTPVerificationScreen = ({navigation, route}) => {
       });
     }, 1000);
     
-    Alert.alert('Code Sent', 'New OTP code sent! Use: 123456');
+    try {
+      console.log('🔥 Enviando novo OTP via AuthService...');
+      const result = await AuthService.sendOTP(phoneNumber);
+      console.log('📨 Resultado do resend:', result);
+      
+      if (result.success) {
+        console.log('✅ Novo OTP enviado com sucesso!');
+        Alert.alert('Código Enviado', 'Novo código OTP foi enviado para seu telefone!');
+      } else {
+        console.log('❌ Falha no envio do novo OTP');
+        Alert.alert('Erro', 'Erro ao enviar novo código. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('💥 Erro no resend OTP:', error);
+      Alert.alert('Erro', error.message || 'Erro ao enviar novo código OTP');
+    }
   };
 
   return (

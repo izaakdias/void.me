@@ -145,7 +145,7 @@ const PhoneAuthScreen = ({navigation, route}) => {
       const fullPhoneNumber = selectedCountry.dialCode + phoneNumber;
       console.log('📞 Número completo:', fullPhoneNumber);
       
-      console.log('🔥 Chamando Firebase sendOTP...');
+      console.log('🔥 Chamando Twilio sendOTP...');
       const result = await AuthService.sendOTP(fullPhoneNumber);
       console.log('📨 Resultado do sendOTP:', result);
       

@@ -13,7 +13,8 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { api } from '../config/api';
+import { AuthService } from '../services/AuthService';
+import Config from '../config/Config';
 
 const {width, height} = Dimensions.get('window');
 
@@ -62,7 +63,7 @@ const WelcomeScreen = ({navigation}) => {
       console.log('🎫 Validando código de convite:', inviteCode);
       
       // Validar código de convite no backend
-      const result = await api.verifyInviteCode(inviteCode);
+      const result = await AuthService.validateInviteCode(inviteCode);
       
       if (result.success) {
         console.log('✅ Código de convite válido!');
@@ -139,7 +140,16 @@ const WelcomeScreen = ({navigation}) => {
     try {
       console.log('📱 Adicionando à waitlist:', fullPhoneNumber);
       
-      const result = await api.addToWaitlist(fullPhoneNumber);
+      // Adicionar à waitlist via API direta
+      const response = await fetch(`${Config.SERVER_URL}/api/waitlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone: fullPhoneNumber }),
+      });
+      
+      const result = await response.json();
       
       if (result.success) {
         Alert.alert(
@@ -183,7 +193,7 @@ const WelcomeScreen = ({navigation}) => {
           {/* Logo da Vo1d */}
           <View style={styles.logoContainer}>
             <Image 
-              source={require('../../assets/images/white-icon.png')} 
+              source={require('../../assets/images/Cloq(1).png')} 
               style={styles.logoImage}
               resizeMode="contain"
             />
@@ -196,7 +206,7 @@ const WelcomeScreen = ({navigation}) => {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.inviteInput}
-                placeholder="TESTRDK9IZ"
+                placeholder="INVITE CODE"
                 placeholderTextColor="#8E8E93"
                 value={inviteCode}
                 onChangeText={handleInviteCodeChange}
